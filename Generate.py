@@ -6,7 +6,7 @@ import time
 from bs4 import BeautifulSoup
 import requests, lxml
 
-# df = pd.read_csv("MCDC-Data.csv")
+# df = pd.read_csv("./Combined-Data.csv")
 
 # try:
 
@@ -49,7 +49,49 @@ import requests, lxml
 
 # except Exception as e:
 #     print(e)
-#     df.to_pickle("./MCDC-Data.pkl")
+#     df.to_pickle("./Combined-Data.pkl")
 
-df = pd.read_pickle("./MCDC-Data.pkl")
-print(df.head(100))
+df1 = pd.read_pickle("./Combined-Data.pkl")
+df2 = pd.read_csv("./Population.csv")
+cities = []
+
+for i in range(len(df2["NAME"]) - 1):
+
+    element = df2.loc[i, ["NAME"]].to_string().split(" ")
+    try:
+        element.remove("NAME")
+    except:
+        pass
+    try:
+        element.remove("(pt.)")
+    except:
+        pass
+    try:
+        element.remove("city")
+    except:
+        pass
+    try:
+        element.remove("town")
+    except:
+        pass
+    cities.append(" ".join(element).strip())
+# print(cities)
+
+# For city in combined data, 
+# print(df1["Town"])
+
+for i in range(len(df1["Town"]) - 1):
+    try:
+        index = cities.index(df1["Town"][i])
+        # df1["Town"][i] = df2["POPESTIMATE2021"][index]
+        df1.loc[i, "Population"] = df2["POPESTIMATE2021"][index]
+    except Exception as e:
+        print(e,df1["Town"][i])
+
+# print(df1.head(100))
+df1.to_csv("~/Desktop/out.csv")
+
+# Check to see if it is in the cities array.
+
+# If it is, use that index to pull the population from df2 and put it in df1 at the current index
+
